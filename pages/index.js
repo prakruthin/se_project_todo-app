@@ -1,23 +1,26 @@
 import { v4 as uuidv4 } from "https://jspm.dev/uuid";
 import { initialTodos, validationConfig } from "../utils/constants.js";
 import Todo from "../components/Todo.js";
-import FormValidator from "../components/FormValidation.js";
+import FormValidator from "../components/FormValidator.js";
 
 const addTodoButton = document.querySelector(".button_action_add");
 const addTodoPopup = document.querySelector("#add-todo-popup");
-const addTodoForm = addTodoPopup.querySelector(".popup__form");
+const addTodoForm = document.forms["add-todo-form"];
 const addTodoCloseBtn = addTodoPopup.querySelector(".popup__close");
-// const todoTemplate = document.querySelector("#todo-template");
 const todosList = document.querySelector(".todos__list");
 
 const openModal = (modal) => {
   modal.classList.add("popup_visible");
-  document.addEventListener("keydown", handleEscapeKey);
 };
 
 const closeModal = (modal) => {
   modal.classList.remove("popup_visible");
-  document.addEventListener("keydown", handleEscapeKey);
+};
+
+const renderTodo = (item) => {
+  const todo = generateTodo(item);
+  todosList.append(todo);
+  console.log("renderTodo called");
 };
 
 // The logic in this function should all be handled in the Todo class.
@@ -28,7 +31,7 @@ const generateTodo = (data) => {
 };
 
 addTodoButton.addEventListener("click", () => {
-  newTodoValidator.resetValidation();
+  // newTodoValidator.resetValidation();
   openModal(addTodoPopup);
 });
 
@@ -47,26 +50,15 @@ addTodoForm.addEventListener("submit", (evt) => {
 
   const id = uuidv4();
   const values = { name, date, id };
-  const todo = generateTodo(values);
-  todosList.append(todo);
+  renderTodo(values);
   closeModal(addTodoPopup);
   addTodoForm.reset();
   newTodoValidator.resetValidation();
 });
 
 initialTodos.forEach((item) => {
-  const todo = generateTodo(item);
-  todosList.append(todo);
+  renderTodo(item);
 });
 
 const newTodoValidator = new FormValidator(validationConfig, addTodoForm);
 newTodoValidator.enableValidation();
-
-const handleEscapeKey = (evt) => {
-  if (evt.key === "Escape") {
-    const openedModal = document.querySelector(".popup_visible");
-    if (openedModal) {
-      closeModal(openedModal);
-    }
-  }
-};
