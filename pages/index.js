@@ -15,6 +15,7 @@ const renderTodo = (item) => {
 };
 
 const generateTodo = (data) => {
+  debugger;
   const todo = new Todo(data, "#todo-template", handleCheck, handleDelete);
   const todoElement = todo.getView();
   return todoElement;
@@ -30,8 +31,7 @@ newTodoValidator.enableValidation();
 const section = new Section({
   items: initialTodos,
   renderer: (item) => {
-    const todo = generateTodo(item);
-    section.addItem(todo);
+    renderTodo(item);
   },
   containerSelector: ".todos__list",
 });
@@ -41,8 +41,9 @@ section.renderItems();
 const addTodoPopup = new PopupWithForm({
   popupSelector: "#add-todo-popup",
   handleFormSubmit: (inputValues) => {
+    inputValues["id"] = uuidv4();
+    inputValues["completed"] = false;
     renderTodo(inputValues);
-    // trial
     todoCounter.updateTotal(true);
     addTodoPopup.close();
     addTodoForm.reset();
